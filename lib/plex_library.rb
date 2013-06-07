@@ -176,8 +176,8 @@ class PlexLibrary
 	@indexes[MOVIES].each do |movieindex|
        doc = xml_doc_for_path("/library/sections/#{movieindex}/all")
 
-       doc.elements.each('MediaContainer/Directory') do |ele|
-         movies << PlexShow.new(ele.attribute("key").value, ele.attribute("title").value )
+       doc.elements.each('MediaContainer/Video') do |ele|
+         movies << PlexShow.new(ele.attribute("key").value, ele.attribute("title").value)
        end
     end
     return movies
