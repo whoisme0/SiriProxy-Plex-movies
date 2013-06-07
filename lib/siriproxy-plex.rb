@@ -83,8 +83,8 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end 
   
   listen_for /(play|playing) (the)? movie (.+)/i do |command, misc, some, next_movie|
-    movies = @plex_library.all_movies()
-	if(!movies.empty?)
+    all_movies = @plex_library.all_movies()
+	if(!all_movies.empty?)
       movie = @plex_library.find_movie(next_movie)
 	  if(movie != nil)
 	    @plex_library.play_media(movie.key)
@@ -93,7 +93,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	    say "Sorry I couldn't find #{next_movie}."
 	  end
 	else
-	  say "Sorry I couldn't find any movies. #{movies}"
+	  say "Sorry I couldn't find any movies."
 	end
 	request_completed
   end
