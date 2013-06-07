@@ -119,7 +119,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end
   
-  listen_for /(play|playing) (the)? tv show(.+) (.+)/i do |command, misc, some, show_title|
+  listen_for /(play|playing) (the)? (tv)? show(.+) (.+)/i do |command, misc, some, show_title|
 
     season_index = 1
     show = @plex_library.find_show(show_title)
@@ -136,41 +136,41 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed      
   end
   
-  listen_for /(play|playing) (.+)\sepisode (.+)/i do |command, first_match, second_match|
-    
-    show_title = first_match
-    
-    if(first_match.match(/(.+) season/))
-      show_title = $1
-    end
-    
-   show = @plex_library.find_show(show_title)    
-    season_index = match_number(first_match, "season")    
-    episode_index = match_number(second_match)
-    
-    #We need to match season in both first match and second
-    #play mythbusters episode 9 season 10 or
-    #play mythbusters season 10 episode 9
-    if(season_index == -1)
-      season = match_number(second_match)
-    end
-    
-    has_many_seasons = @plex_library.has_many_seasons?(show)
-    
-    if(season_index == -1 && has_many_seasons)
-      season_index = ask_for_season
-    elsif(season_index == -1 && !has_many_seasons)
-      season_index = 1
-    end
-    
-    if(show)
-      play_episode(show, episode_index, season_index)
-    else
-      show_not_found
-    end
-    
-    request_completed
-  end
+#  listen_for /(play|playing) (.+)\sepisode (.+)/i do |command, first_match, second_match|
+#    
+#    show_title = first_match
+#    
+#    if(first_match.match(/(.+) season/))
+#      show_title = $1
+#    end
+#    
+#   show = @plex_library.find_show(show_title)    
+#    season_index = match_number(first_match, "season")    
+#    episode_index = match_number(second_match)
+#    
+#    #We need to match season in both first match and second
+#    #play mythbusters episode 9 season 10 or
+#    #play mythbusters season 10 episode 9
+#    if(season_index == -1)
+#      season = match_number(second_match)
+#    end
+#    
+#    has_many_seasons = @plex_library.has_many_seasons?(show)
+#    
+#    if(season_index == -1 && has_many_seasons)
+#      season_index = ask_for_season
+#    elsif(season_index == -1 && !has_many_seasons)
+#      season_index = 1
+#    end
+#    
+#    if(show)
+#      play_episode(show, episode_index, season_index)
+#    else
+#      show_not_found
+#    end
+#    
+#    request_completed
+#  end
   
   def ask_for_number(question)   
     episode = nil
