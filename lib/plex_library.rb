@@ -177,7 +177,7 @@ class PlexLibrary
        doc = xml_doc_for_path("/library/sections/#{movieindex}/all")
 
        doc.elements.each('MediaContainer/Directory') do |ele|
-         movies << PlexShow.new(ele.attribute("key").value, ele.attribute("title").value)
+         movies << PlexOndeck.new(ele.attribute("key").value, ele.attribute("title").value, ele.attribute("grandparentTitle"))
        end
     end
     return movies
