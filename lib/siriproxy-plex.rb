@@ -49,7 +49,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
       end 
       response = ask "Which show would you like to watch?"
 	    if (response.match(/Cancel|Nevermind|None/))
-          say "Got it."
+          say "Okay."
         else		   
           show = @plex_library.find_ondeck_show(response)
           if(show != nil)
@@ -81,7 +81,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play (a)? random episode of (.+)/i do |command, misc, some, request|
+  listen_for /play (a)? random episode of (.+)/i do |command, misc, some, stuff, request|
     random_show = @plex_library.find_show(request)
     if(!random_show.empty?)
        random_episode = @plex_library.show_episode(random_show).shuffle.first
@@ -106,7 +106,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
       end 
       response = ask "Which movie would you like to watch?"
 	    if (response.match(/Cancel|Nevermind|None/))
-          say "Got it."
+          say "Okay."
         else
           movie = @plex_library.find_ondeck_movie(response)
             if(movie != nil)
@@ -154,7 +154,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play (the)? movie (.+)/i do |command, misc, next_movie|
+  listen_for /play (the)? movie (.+)/i do |command, misc, some, next_movie|
     movies = @plex_library.all_movies()
 	if(!movies.empty?)
       movie = @plex_library.find_movie(next_movie)
@@ -186,7 +186,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play (the)? next(.+) of (.+)/i do |command, some, misc, next_episode|
+  listen_for /(play) (the)? next(.+) of (.+)/i do |command, misc, some, next_episode|
     ondeck_shows = @plex_library.all_ondeck()
     if(!ondeck_shows.empty?)
        show = @plex_library.find_ondeck_show(next_episode)
