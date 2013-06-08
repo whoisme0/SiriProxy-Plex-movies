@@ -87,7 +87,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
        random_episode = @plex_library.show_episodes(show).shuffle.first
        if(random_episode != nil)
          @plex_library.play_media(random_episode.key)
-         say "Playing #{random_episode.gptitle}, #{random_episode.title}."
+         say "Playing #{show.gptitle}, #{random_episode.title}."
        else
          say "Sorry, an error occurred.  Please try again."
        end 
