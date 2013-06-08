@@ -61,7 +61,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play (a)? random on deck tv show/i do
+  listen_for /play(?: a)? random on deck tv show/i do
     ondeck_shows = @plex_library.all_ondeck()
     if(!ondeck_shows.empty?)
        show = @plex_library.all_ondeck.shuffle.first
@@ -98,7 +98,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play (a)? random on deck movie/i do
+  listen_for /play(?: a)? random on deck movie/i do
     ondeck_movies = @plex_library.all_ondeck_movies()
     if(!ondeck_movies.empty?)
        movie = @plex_library.all_ondeck_movies.shuffle.first
@@ -114,7 +114,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /(play|playing) (the)? movie (.+)/i do |command, misc, next_movie|
+  listen_for /play(?: the)? movie (.+)/i do |command, misc, next_movie|
     movies = @plex_library.all_movies()
 	if(!movies.empty?)
       movie = @plex_library.find_movie(next_movie)
@@ -130,7 +130,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	request_completed
   end
   
-  listen_for /(play|playing) (the)? next(.+) of (.+)/i do |command, misc, some, next_episode|
+  listen_for /play(?: the)? next(.+) of (.+)/i do |command, misc, some, next_episode|
     ondeck_shows = @plex_library.all_ondeck()
     if(!ondeck_shows.empty?)
        show = @plex_library.find_ondeck_show(next_episode)
