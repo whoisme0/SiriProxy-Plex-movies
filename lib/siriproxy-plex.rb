@@ -53,10 +53,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          @plex_library.play_media(show.key)
          say "Playing #{show.gptitle}, #{show.title}."
        else
-         say "Sorry I couldn't find #{response} in the ondeck queue"
+         say "Sorry I couldn't find #{response} in the ondeck queue."
        end 
     else
-      say "Sorry I couldn't find anything in your onDeck queue"
+      say "Sorry I couldn't find anything in your onDeck queue."
     end 
     request_completed
   end 
@@ -69,10 +69,26 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          @plex_library.play_media(show.key)
          say "Playing #{show.gptitle}, #{show.title}."
        else
-         say "Sorry, an error occurred.  Please try again"
+         say "Sorry, an error occurred.  Please try again."
        end 
     else
-      say "Sorry I couldn't find anything in your onDeck queue"
+      say "Sorry I couldn't find anything in your onDeck queue."
+    end 
+    request_completed
+  end 
+  
+  listen_for /play(?: a)? random episode of (.+)/i do |command, some, misc, request|
+    random_show = @plex_library.find_show(request)
+    if(!random_show.empty?)
+       random_episode = @plex_library.show_episode(random_show).shuffle.first
+       if(random_episode != nil)
+         @plex_library.play_media(show.key)
+         say "Playing #{show.gptitle}, #{show.title}."
+       else
+         say "Sorry, an error occurred.  Please try again."
+       end 
+    else
+      say "Sorry I couldn't find any TV shows."
     end 
     request_completed
   end 
@@ -90,10 +106,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          @plex_library.play_media(movie.key)
          say "Playing #{movie.title}."
        else
-         say "Sorry I couldn't find #{response} in the ondeck queue"
+         say "Sorry I couldn't find #{response} in the ondeck queue."
        end 
     else
-      say "Sorry I couldn't find anything in your onDeck queue"
+      say "Sorry I couldn't find anything in your onDeck queue."
     end 
     request_completed
   end 
@@ -106,10 +122,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          @plex_library.play_media(movie.key)
          say "Playing #{movie.title}."
        else
-         say "Sorry, an error occurred.  Please try again"
+         say "Sorry, an error occurred.  Please try again."
        end 
     else
-      say "Sorry I couldn't find anything in your onDeck queue"
+      say "Sorry I couldn't find anything in your onDeck queue."
     end 
     request_completed
   end 
@@ -138,10 +154,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          @plex_library.play_media(show.key)
          say "Playing #{show.gptitle}, #{show.title}."
        else
-         say "Sorry I couldn't find #{next_episode} in the ondeck queue"
+         say "Sorry I couldn't find #{next_episode} in the ondeck queue."
        end 
     else
-      say "Sorry I couldn't find anything in your onDeck queue"
+      say "Sorry I couldn't find anything in your onDeck queue."
     end 
     request_completed
   end 
