@@ -12,7 +12,7 @@ class PlexLibrary
   def initialize(host, port, tv_index, movie_index, player = nil)
     @host     = host
     @port     = port
-#    @tv_index = tv_index
+    @tv_index = tv_index
     @movie_index = movie_index
     @player   = player.nil? ? host : player
     @indexes = {}
@@ -31,7 +31,20 @@ class PlexLibrary
        @indexes["#{TV}"] << "#{tv_index}"
     end
 	@indexes["#{MOVIES}"] = []
-	@indexes["#{MOVIES}"] << "#{movie_index}"
+	if (movie_index == "auto")
+       doc = xml_doc_for_path("/library/sections")
+       doc.elements.each('MediaContainer/Directory') do |ele|
+          num = ele.attribute("key").value
+          agent = ele.attribute("agent").value
+          if (!@indexes.include?("#{agent}"))
+             @indexes["#{agent}"] = []
+          end
+             @indexes["#{agent}"] << "#{num}"
+       end
+    else
+       @indexes["#{MOVIES}"] << "#{movie_index}"
+    end
+	
   end
   
   def base_path
