@@ -183,8 +183,8 @@ class PlexLibrary
     if show == nil then return nil end
     show_episodes(show).sort.last
   end
-  
-    def all_movies
+    
+  def all_movies
     movies = []
 	@indexes[MOVIES].each do |movieindex|
        doc = xml_doc_for_path("/library/sections/#{movieindex}/all")
