@@ -81,7 +81,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /(play) (a)? random episode of (.+)/i do |command, misc, some, request|
+  listen_for /(play) (a)? random episode of (.+)/i do |command, misc, some, stuff, thing, request|
     random_show = @plex_library.find_show(request)
     if(!random_show.empty?)
        random_episode = @plex_library.show_episode(random_show).shuffle.first
@@ -260,7 +260,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end
   
-  listen_for /(Pause|Resume|Stop) (plex|tv|show|tv show|movie)/i do |command, some|
+  listen_for /(Pause|Resume|Stop)(?: the) (plex|tv|show|tv show|movie)/i do |command, some|
     if command == "Pause"
       @plex_library.pause
 	  say "Pausing #{some}"
