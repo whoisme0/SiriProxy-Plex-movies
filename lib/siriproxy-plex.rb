@@ -175,12 +175,15 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   listen_for /(.+) (plex|tv|show|movie)/i do |command, some|
     if command == "pause"
       @plex_library.pause
+	  say "Pausing #{some}"
 	end
     if command == "play"
 	  @plex_library.resume_play
+	  say "Playing #{some}"
 	end
 	if command == "stop"
 	  @plex_library.stop
+	  say "Stopping #{some}"
 	end	
 	
 	request_completed
