@@ -65,7 +65,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /play(?: a)? random on deck tv show/i do
+  listen_for /play(?: a)? random on deck (tv show|episode)/i do
     ondeck_shows = @plex_library.all_ondeck()
     if(!ondeck_shows.empty?)
        show = @plex_library.all_ondeck.shuffle.first
