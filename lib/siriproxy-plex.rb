@@ -48,16 +48,27 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
         say "#{singleshow.gptitle}, #{singleshow.title}"
       end 
       response = ask "Which show would you like to watch?"
-	    if (response.match(/Cancel|Nevermind|None/))
+	    if(response.match(/Cancel|Nevermind|None/))
           say "Okay."
         else		   
           show = @plex_library.find_ondeck_show(response)
-          if(show != nil)
-            @plex_library.play_media(show.key)
-            say "Playing #{show.gptitle}, #{show.title}."
-          else
-            say "Sorry I couldn't find #{response} in the ondeck queue."
-          end 
+            if(show != nil)
+		      if(show.viewOffset != nil)
+			    resume = ask "Would you like to resume this episode or start from the beginning?"
+			      if(resume.match(/Resume/)
+			        @plex_library.resume_media(show.key, show.viewOffset)
+			        say "Resuming #{show.gptitle}, #{show.title}."
+				  else
+				    @plex_library.play_media(show.key)
+                    say "Playing #{show.gptitle}, #{show.title}."
+			   	  end
+			  else
+			    @plex_library.play_media(show.key)
+                say "Playing #{show.gptitle}, #{show.title}."
+			  end
+            else
+              say "Sorry I couldn't find #{response} in the ondeck queue."
+            end 
 		end
     else
       say "Sorry I couldn't find anything in your onDeck queue."
@@ -70,8 +81,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     if(!ondeck_shows.empty?)
        show = @plex_library.all_ondeck.shuffle.first
        if(show != nil)
-         @plex_library.play_media(show.key)
-         say "Playing #{show.gptitle}, #{show.title}."
+         if(show.viewOffset != nil)
+		    resume = ask "Would you like to resume this episode or start from the beginning?"
+		      if(resume.match(/Resume/)
+		        @plex_library.resume_media(show.key, show.viewOffset)
+		        say "Resuming #{show.gptitle}, #{show.title}."
+			  else
+			    @plex_library.play_media(show.key)
+                say "Playing #{show.gptitle}, #{show.title}."
+		   	  end
+		  else
+		    @plex_library.play_media(show.key)
+            say "Playing #{show.gptitle}, #{show.title}."
+		  end
        else
          say "Sorry, an error occurred.  Please try again."
        end 
@@ -87,6 +109,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  random_episode = @plex_library.show_episodes(show).shuffle.first
 	   if(random_episode != nil)
          @plex_library.play_media(random_episode.key)
+		 say "Playing a random episode of #{show.title}."
        else
          say "Sorry, an error occurred.  Please try again."
        end 
@@ -109,8 +132,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
         else
           movie = @plex_library.find_ondeck_movie(response)
             if(movie != nil)
-              @plex_library.play_media(movie.key)
-              say "Playing #{movie.title}."
+              if(movie.viewOffset != nil)
+			    resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
+			      if(resume.match(/Resume/)
+			        @plex_library.resume_media(movie.key, movie.viewOffset)
+			        say "Resuming #{movie.title}."
+				  else
+				    @plex_library.play_media(movie.key)
+                    say "Playing #{movie.title}."
+			   	  end
+			  else
+			    @plex_library.play_media(movie.key)
+                say "Playing #{movie.title}."
+			  end
             else
               say "Sorry I couldn't find #{response} in the ondeck queue."
             end 
@@ -126,8 +160,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     if(!ondeck_movies.empty?)
        movie = @plex_library.all_ondeck_movies.shuffle.first
        if(movie != nil)
-         @plex_library.play_media(movie.key)
-         say "Playing #{movie.title}."
+         if(movie.viewOffset != nil)
+		    resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
+		      if(resume.match(/Resume/)
+		        @plex_library.resume_media(movie.key, movie.viewOffset)
+		        say "Resuming #{movie.title}."
+			  else
+			    @plex_library.play_media(movie.key)
+                say "Playing #{movie.title}."
+		   	  end
+		  else
+		    @plex_library.play_media(movie.key)
+            say "Playing #{movie.title}."
+		  end
        else
          say "Sorry, an error occurred.  Please try again."
        end 
@@ -190,8 +235,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     if(!ondeck_shows.empty?)
        show = @plex_library.find_ondeck_show(next_episode)
        if(show != nil)
-         @plex_library.play_media(show.key)
-         say "Playing #{show.gptitle}, #{show.title}."
+         if(show.viewOffset != nil)
+		    resume = ask "Would you like to resume this episode or start from the beginning?"
+		      if(resume.match(/Resume/)
+		        @plex_library.resume_media(show.key, show.viewOffset)
+		        say "Resuming #{show.gptitle}, #{show.title}."
+			  else
+			    @plex_library.play_media(show.key)
+                say "Playing #{show.gptitle}, #{show.title}."
+		   	  end
+		  else
+		    @plex_library.play_media(show.key)
+            say "Playing #{show.gptitle}, #{show.title}."
+		  end
        else
          say "Sorry I couldn't find #{next_episode} in the ondeck queue."
        end 
@@ -218,7 +274,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
       episode_index = ask_for_episode
     end
             
-    random_episode(show, episode_index, season_index)
+    play_episode(show, episode_index, season_index)
     
     request_completed      
   end
@@ -251,7 +307,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     end
     
     if(show)
-      random_episode(show, episode_index, season_index)
+      play_episode(show, episode_index, season_index)
     else
       show_not_found
     end
@@ -318,7 +374,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     ask_for_number("Which episode?")
   end
   
-  def random_episode(show, episode_index, season_index = 1)
+  def play_episode(show, episode_index, season_index = 1)
     
     if(show != nil)
       episode = @plex_library.find_episode(show, season_index, episode_index)
