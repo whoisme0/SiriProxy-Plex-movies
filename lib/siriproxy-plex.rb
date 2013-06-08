@@ -61,6 +61,22 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
+  listen_for /play (a)? random on deck tv show/i do
+    ondeck_shows = @plex_library.all_ondeck()
+    if(!ondeck_shows.empty?)
+       show = @plex_library.all_ondeck.shuffle.first
+       if(show != nil)
+         @plex_library.play_media(show.key)
+         say "Playing #{show.gptitle}, #{show.title}."
+       else
+         say "Sorry, an error occurred.  Please try again"
+       end 
+    else
+      say "Sorry I couldn't find anything in your onDeck queue"
+    end 
+    request_completed
+  end 
+  
     listen_for /on deck movies/i do
     ondeck_movies = @plex_library.all_ondeck_movies()
     if(!ondeck_movies.empty?)
@@ -75,6 +91,22 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
          say "Playing #{movie.title}."
        else
          say "Sorry I couldn't find #{response} in the ondeck queue"
+       end 
+    else
+      say "Sorry I couldn't find anything in your onDeck queue"
+    end 
+    request_completed
+  end 
+  
+  listen_for /play (a)? random on deck movie/i do
+    ondeck_movies = @plex_library.all_ondeck_movies()
+    if(!ondeck_movies.empty?)
+       movie = @plex_library.all_ondeck_movies.shuffle.first
+       if(movie != nil)
+         @plex_library.play_media(movie.key)
+         say "Playing #{movie.title}."
+       else
+         say "Sorry, an error occurred.  Please try again"
        end 
     else
       say "Sorry I couldn't find anything in your onDeck queue"
