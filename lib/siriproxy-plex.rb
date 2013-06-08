@@ -81,7 +81,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
-  listen_for /(play) (a)? (random episode) of(.+)/i do |command, misc, request|
+  listen_for /(play) (a)? random(.+) of(.+)/i do |command, misc, some, request|
     random_show = @plex_library.find_show(request)
     if(!random_show.empty?)
        random_episode = @plex_library.show_episode(random_show).shuffle.first
