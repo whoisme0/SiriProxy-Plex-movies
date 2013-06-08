@@ -177,9 +177,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
       @plex_library.pause
 	  say "Pausing #{some}"
 	end
-    if command == "play"
+    if command == "resume"
 	  @plex_library.resume_play
-	  say "Playing #{some}"
+	  say "Resuming #{some}"
 	end
 	if command == "stop"
 	  @plex_library.stop
