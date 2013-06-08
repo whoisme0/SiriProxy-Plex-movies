@@ -172,20 +172,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end
   
-  listen_for /pause(.+) (plex|tv|show|movie)? /i do |command, some|
-    @plex_library.pause
-	
-	request_completed
-  end
-  
-    listen_for /play(.+) (plex|tv|show|movie)? /i do |command, some|
-    @plex_library.resume_play
-	
-	request_completed
-  end
-  
-    listen_for /stop(.+) (plex|tv|show|movie)? /i do |command, some|
-    @plex_library.stop
+  listen_for /(.+) (plex|tv|show|movie)/i do |command, some|
+    if command = "pause"
+      @plex_library.pause
+	end
+    if command = "play"
+	  @plex_library.resume_play
+	end
+	if command = "stop"
+	  @plex_library.stop
+	end	
 	
 	request_completed
   end
