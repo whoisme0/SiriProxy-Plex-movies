@@ -11,11 +11,11 @@ Voice Commands
 
 + play "show"
 + play latest episode of "show"
-+ play the next episode of "show"
++ play the next episode of "show" --
 + on deck tv shows
 + play a random on deck tv show
-+ play a random episode of "show"
-+ play the movie "movie"
++ play a random episode of "show" --
++ play the movie "movie" --
 + on deck movies
 + play a random on deck movie
 + play a random unwatched movie
