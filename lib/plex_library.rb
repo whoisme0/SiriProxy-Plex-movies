@@ -210,6 +210,26 @@ class PlexLibrary
     return movies
   end
   
+    def all_unwatched_movies
+    unwatched_movies = []
+	@indexes[MOVIES].each do |movieindex|
+       doc = xml_doc_for_path("/library/sections/#{movieindex}/unwatched")
+
+       doc.elements.each('MediaContainer/Video') do |ele|
+         unwatched_movies << PlexShow.new(ele.attribute("key").value, ele.attribute("title").value)
+       end
+    end
+    return unwatched_movies
+  end
+  
+  def find_unwatched_movie(title)
+    title.gsub!(/^The\s+/, "")
+    splitted = title.split(" ").join("|")
+    movies = all_unwatched_movies
+    movies = movies.detect {|s| s.title.match(/#{splitted}/i)}
+    return movies
+  end
+  
   def play_media(key)
     url_encoded_key = CGI::escape(key)
     uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}"

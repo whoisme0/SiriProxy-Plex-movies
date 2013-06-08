@@ -130,6 +130,22 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     request_completed
   end 
   
+  listen_for /play(?: a)? random unwatched movie/i do
+    unwatched_movies = @plex_library.all_unwatched_movies()
+    if(!unwatched_movies.empty?)
+       movie = @plex_library.all_unwatched_movies.shuffle.first
+       if(movie != nil)
+         @plex_library.play_media(movie.key)
+         say "Playing #{movie.title}."
+       else
+         say "Sorry, an error occurred.  Please try again."
+       end 
+    else
+      say "Sorry I couldn't find any unwatched movies."
+    end 
+    request_completed
+  end 
+  
   listen_for /play(?: the)? movie (.+)/i do |command, misc, next_movie|
     movies = @plex_library.all_movies()
 	if(!movies.empty?)
@@ -145,6 +161,22 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	end
 	request_completed
   end
+  
+  listen_for /play(?: a)? random movie/i do
+    all_movies = @plex_library.all_movies()
+    if(!all_movies.empty?)
+       movie = @plex_library.all_movies.shuffle.first
+       if(movie != nil)
+         @plex_library.play_media(movie.key)
+         say "Playing #{movie.title}."
+       else
+         say "Sorry, an error occurred.  Please try again."
+       end 
+    else
+      say "Sorry I couldn't find any movies."
+    end 
+    request_completed
+  end 
   
   listen_for /play(?: the)? next(.+) of (.+)/i do |command, misc, some, next_episode|
     ondeck_shows = @plex_library.all_ondeck()
