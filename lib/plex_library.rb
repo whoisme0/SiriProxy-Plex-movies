@@ -221,4 +221,16 @@ class PlexLibrary
     end
   end
   
+  def pause
+    uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/pause"
+  end
+  
+  def resume_play
+    uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/play"
+  end
+  
+  def stop
+    uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/stop"
+  end
+  
 end
