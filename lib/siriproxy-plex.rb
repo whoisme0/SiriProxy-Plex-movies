@@ -246,7 +246,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  request_completed
   end 
   
-  listen_for /(play)(?: the)? next(.+) of (.+)/i do |command, misc, some, next_episode|
+  listen_for /(play)(?: the)? next(.+) of (.+)/i do |command, some, next_episode|
 	ondeck_shows = @plex_library.all_ondeck()
 	if(!ondeck_shows.empty?)
 	  show = @plex_library.find_ondeck_show(next_episode)
