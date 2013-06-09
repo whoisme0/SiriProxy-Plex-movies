@@ -256,11 +256,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			    resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
-				  @plex_library.resume_media(movie.key, movie.viewOffset.value)
-				  say "Resuming #{movie.title}."
+				  @plex_library.resume_media(show.key, show.viewOffset.value)
+				  say "Resuming #{show.gptitle}, #{show.title}."
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-				  @plex_library.play_media(movie.key)
-				  say "Playing #{movie.title}."
+				  @plex_library.play_media(show.key)
+				  say "Playing #{show.gptitle}, #{show.title}."
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
