@@ -282,7 +282,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	request_completed
   end
   
-  listen_for /(play|playing) (the)? (TV)? show (.+)/i do |command, misc, some, show_title|
+  listen_for /(play|playing) (the)? (TV)? show (.+)/i do |command, misc, show_title|
 
     season_index = 1
     show = @plex_library.find_show(show_title)
