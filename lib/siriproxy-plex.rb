@@ -55,12 +55,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 				if(show != nil)
 					if(show.viewOffset.value != nil)
 					  resume = ask "Would you like to resume this episode or start from the beginning?"
-						if(resume.match(/Resume/))
+						resume.gsub!(/^The\s+/, "")
+						splitted = resume.split(" ").join("|")
+						if(splitted.match(/Resume/))
 						  @plex_library.resume_media(show.key, show.viewOffset.value)
 						  say "Resuming #{show.gptitle}, #{show.title}."
-						else
+						elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 						  @plex_library.play_media(show.key)
 						  say "Playing #{show.gptitle}, #{show.title}."
+						else
+						  say "I'm sorry, I didn't understand that.  Please try again."
 						end
 					else
 					  @plex_library.play_media(show.key)
@@ -83,12 +87,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(show != nil)
 			if(show.viewOffset.value != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
-				if(resume.match(/Resume/))
+			    resume.gsub!(/^The\s+/, "")
+				splitted = resume.split(" ").join("|")
+				if(splitted.match(/Resume/))
 				  @plex_library.resume_media(show.key, show.viewOffset.value)
 				  say "Resuming #{show.gptitle}, #{show.title}."
-				else
+				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 				  @plex_library.play_media(show.key)
 				  say "Playing #{show.gptitle}, #{show.title}."
+				else
+				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  @plex_library.play_media(show.key)
@@ -134,12 +142,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			if(movie != nil)
 				if(movie.viewOffset != nil)
 				  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-					if(resume.match(/Resume/))
-					  @plex_library.resume_media(movie.key, movie.viewOffset)
+				    resume.gsub!(/^The\s+/, "")
+					splitted = resume.split(" ").join("|")
+					if(splitted.match(/Resume/))
+					  @plex_library.resume_media(movie.key, movie.viewOffset.value)
 					  say "Resuming #{movie.title}."
-					else
+					elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 					  @plex_library.play_media(movie.key)
 					  say "Playing #{movie.title}."
+					else
+					  say "I'm sorry, I didn't understand that.  Please try again."
 					end
 				else
 				  @plex_library.play_media(movie.key)
@@ -162,12 +174,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(movie != nil)
 			if(movie.viewOffset != nil)
 			  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-				if(resume.match(/Resume/))
-				  @plex_library.resume_media(movie.key, movie.viewOffset)
+			    resume.gsub!(/^The\s+/, "")
+				splitted = resume.split(" ").join("|")
+				if(splitted.match(/Resume/))
+				  @plex_library.resume_media(movie.key, movie.viewOffset.value)
 				  say "Resuming #{movie.title}."
-				else
+				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 				  @plex_library.play_media(movie.key)
 				  say "Playing #{movie.title}."
+				else
+				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  @plex_library.play_media(movie.key)
@@ -237,12 +253,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(show != nil)
 			if(show.viewOffset.value != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
-				if(resume.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset.value)
-				  say "Resuming #{show.gptitle}, #{show.title}."
+			    resume.gsub!(/^The\s+/, "")
+				splitted = resume.split(" ").join("|")
+				if(splitted.match(/Resume/))
+				  @plex_library.resume_media(movie.key, movie.viewOffset.value)
+				  say "Resuming #{movie.title}."
+				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
+				  @plex_library.play_media(movie.key)
+				  say "Playing #{movie.title}."
 				else
-				  @plex_library.play_media(show.key)
-				  say "Playing #{show.gptitle}, #{show.title}."
+				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  @plex_library.play_media(show.key)
