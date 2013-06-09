@@ -46,6 +46,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  say "On Deck shows are:"
 	  ondeck_shows.each do |singleshow|
 		say "#{singleshow.gptitle}, #{singleshow.title}"
+	  end
 		response = ask "Which show would you like to watch?"
 			if(response.match(/Cancel|Nevermind|None/))
 			  say "Okay."
@@ -124,6 +125,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  say "On Deck movies are:"
 	  ondeck_movies.each do |singlemovie|
 		say "#{singlemovie.title}"
+	  end
 		response = ask "Which movie would you like to watch?"
 		if (response.match(/Cancel|Nevermind|None/))
 		  say "Okay."
