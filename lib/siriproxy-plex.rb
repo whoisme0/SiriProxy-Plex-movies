@@ -55,7 +55,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 				if(show != nil)
 					if(show.viewOffset != nil)
 					  resume = ask "Would you like to resume this episode or start from the beginning?"
-						if(resume.match(/Resume/)))
+						if(resume.match(/Resume/))
 						  @plex_library.resume_media(show.key, show.viewOffset)
 						  say "Resuming #{show.gptitle}, #{show.title}."
 						else
@@ -134,7 +134,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			if(movie != nil)
 				if(movie.viewOffset != nil)
 				  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-					if(resume.match(/Resume/)))
+					if(resume.match(/Resume/))
 					  @plex_library.resume_media(movie.key, movie.viewOffset)
 					  say "Resuming #{movie.title}."
 					else
@@ -162,7 +162,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(movie != nil)
 			if(movie.viewOffset != nil)
 			  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-				if(resume.match(/Resume/)))
+				if(resume.match(/Resume/))
 				  @plex_library.resume_media(movie.key, movie.viewOffset)
 				  say "Resuming #{movie.title}."
 				else
@@ -237,7 +237,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(show != nil)
 			if(show.viewOffset != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
-				if(resume.match(/Resume/)))
+				if(resume.match(/Resume/))
 				  @plex_library.resume_media(show.key, show.viewOffset)
 				  say "Resuming #{show.gptitle}, #{show.title}."
 				else
