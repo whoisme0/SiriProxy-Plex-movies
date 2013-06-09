@@ -77,7 +77,7 @@ class PlexLibrary
        doc = xml_doc_for_path("/library/sections/#{tvindex}/onDeck")
 
        doc.elements.each('MediaContainer/Video') do |ele|
-         ondeck_shows << PlexOndeck.new(ele.attribute("key").value, ele.attribute("title").value, ele.attribute("grandparentTitle").value, ele.attribute("viewOffset").value)
+         ondeck_shows << PlexOndeck.new(ele.attribute("key").value, ele.attribute("title").value, ele.attribute("grandparentTitle").value, ele.attribute("viewOffset"))
        end
     end
     return ondeck_shows
@@ -209,7 +209,7 @@ class PlexLibrary
        doc = xml_doc_for_path("/library/sections/#{movieindex}/onDeck")
 
        doc.elements.each('MediaContainer/Video') do |ele|
-         ondeck_movies << PlexOndeck.new(ele.attribute("key").value, ele.attribute("title").value, ele.attribute("grandparentTitle"), ele.attribute("viewOffset").value)
+         ondeck_movies << PlexOndeck.new(ele.attribute("key").value, ele.attribute("title").value, ele.attribute("grandparentTitle"), ele.attribute("viewOffset"))
        end
     end
     return ondeck_movies

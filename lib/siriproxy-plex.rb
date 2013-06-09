@@ -53,10 +53,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			else
 			  show = @plex_library.find_ondeck_show(response)
 				if(show != nil)
-					if(show.viewOffset != nil)
+					if(show.viewOffset.value != nil)
 					  resume = ask "Would you like to resume this episode or start from the beginning?"
 						if(resume.match(/Resume/))
-						  @plex_library.resume_media(show.key, show.viewOffset)
+						  @plex_library.resume_media(show.key, show.viewOffset.value)
 						  say "Resuming #{show.gptitle}, #{show.title}."
 						else
 						  @plex_library.play_media(show.key)
@@ -81,10 +81,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	if(!ondeck_shows.empty?)
 	  show = @plex_library.all_ondeck.shuffle.first
 		if(show != nil)
-			if(show.viewOffset != nil)
+			if(show.viewOffset.value != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
 				if(resume.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset)
+				  @plex_library.resume_media(show.key, show.viewOffset.value)
 				  say "Resuming #{show.gptitle}, #{show.title}."
 				else
 				  @plex_library.play_media(show.key)
@@ -235,10 +235,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	if(!ondeck_shows.empty?)
 	  show = @plex_library.find_ondeck_show(next_episode)
 		if(show != nil)
-			if(show.viewOffset != nil)
+			if(show.viewOffset.value != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
 				if(resume.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset)
+				  @plex_library.resume_media(show.key, show.viewOffset.value)
 				  say "Resuming #{show.gptitle}, #{show.title}."
 				else
 				  @plex_library.play_media(show.key)
