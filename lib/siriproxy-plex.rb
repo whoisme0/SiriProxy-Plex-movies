@@ -53,7 +53,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			else
 			  show = @plex_library.find_ondeck_show(response)
 				if(show != nil)
-					if(show.viewOffset.value != nil)
+					if(show.viewOffset != nil)
 					  resume = ask "Would you like to resume this episode or start from the beginning?"
 						resume.gsub!(/^The\s+/, "")
 						splitted = resume.split(" ").join("|")
@@ -85,7 +85,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	if(!ondeck_shows.empty?)
 	  show = @plex_library.all_ondeck.shuffle.first
 		if(show != nil)
-			if(show.viewOffset.value != nil)
+			if(show.viewOffset != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
 			    resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
@@ -251,7 +251,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	if(!ondeck_shows.empty?)
 	  show = @plex_library.find_ondeck_show(next_episode)
 		if(show != nil)
-			if(show.viewOffset.value != nil)
+			if(show.viewOffset != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
 			    resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
