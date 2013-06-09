@@ -46,34 +46,34 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  say "On Deck shows are:"
 	  ondeck_shows.each do |singleshow|
 		say "#{singleshow.gptitle}, #{singleshow.title}"
-	end 
-	 response = ask "Which show would you like to watch?"
-	if(response.match(/Cancel|Nevermind|None/))
-	  say "Okay."
-	else		   
-	  show = @plex_library.find_ondeck_show(response)
-		if(show != nil)
-			if(show.viewOffset != nil)
-			  resume = ask "Would you like to resume this episode or start from the beginning?"
-				if(resume.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset)
-				  say "Resuming #{show.gptitle}, #{show.title}."
-				else
-				  @plex_library.play_media(show.key)
-				  say "Playing #{show.gptitle}, #{show.title}."
-				end
+		response = ask "Which show would you like to watch?"
+			if(response.match(/Cancel|Nevermind|None/))
+			  say "Okay."
 			else
-			  @plex_library.play_media(show.key)
-			  say "Playing #{show.gptitle}, #{show.title}."
+			  show = @plex_library.find_ondeck_show(response)
+				if(show != nil)
+					if(show.viewOffset != nil)
+					  resume = ask "Would you like to resume this episode or start from the beginning?"
+						if(resume.match(/Resume/))
+						  @plex_library.resume_media(show.key, show.viewOffset)
+						  say "Resuming #{show.gptitle}, #{show.title}."
+						else
+						  @plex_library.play_media(show.key)
+						  say "Playing #{show.gptitle}, #{show.title}."
+						end
+					else
+					  @plex_library.play_media(show.key)
+					  say "Playing #{show.gptitle}, #{show.title}."
+					end
+				else
+				  say "Sorry I couldn't find #{response} in the ondeck queue."
+				end
 			end
-		else
-		  say "Sorry I couldn't find #{response} in the ondeck queue."
-		end 
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
-	end 
+	end
 	  request_completed
-  end 
+  end
   
   listen_for /play(?: a)? random on deck (tv show|episode)/i do
 	ondeck_shows = @plex_library.all_ondeck()
@@ -124,29 +124,29 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  say "On Deck movies are:"
 	  ondeck_movies.each do |singlemovie|
 		say "#{singlemovie.title}"
-	end 
-	response = ask "Which movie would you like to watch?"
-	if (response.match(/Cancel|Nevermind|None/))
-	  say "Okay."
-	else
-	  movie = @plex_library.find_ondeck_movie(response)
-		if(movie != nil)
-			if(movie.viewOffset != nil)
-			  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-				if(resume.match(/Resume/))
-				  @plex_library.resume_media(movie.key, movie.viewOffset)
-				  say "Resuming #{movie.title}."
+		response = ask "Which movie would you like to watch?"
+		if (response.match(/Cancel|Nevermind|None/))
+		  say "Okay."
+		else
+		  movie = @plex_library.find_ondeck_movie(response)
+			if(movie != nil)
+				if(movie.viewOffset != nil)
+				  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
+					if(resume.match(/Resume/))
+					  @plex_library.resume_media(movie.key, movie.viewOffset)
+					  say "Resuming #{movie.title}."
+					else
+					  @plex_library.play_media(movie.key)
+					  say "Playing #{movie.title}."
+					end
 				else
 				  @plex_library.play_media(movie.key)
 				  say "Playing #{movie.title}."
 				end
 			else
-			  @plex_library.play_media(movie.key)
-			  say "Playing #{movie.title}."
+			  say "Sorry I couldn't find #{response} in the ondeck queue."
 			end
-		else
-		  say "Sorry I couldn't find #{response} in the ondeck queue."
-		end 
+		end
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end 
