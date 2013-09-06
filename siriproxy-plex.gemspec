@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "siriproxy-plex"
-  s.version     = "0.0.7" 
+  s.version     = "0.0.3" 
   s.authors     = ["hjaltij"]
   s.email       = ["hjalti@hjaltijakobsson.com"]
   s.homepage    = "http://www.hjaltijakobsson.com"
