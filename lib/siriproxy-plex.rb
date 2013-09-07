@@ -37,7 +37,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
     @tv_index = config["plex_tv_index"]
 	@movie_index = config["plex_movie_index"]
     @player = config["plex_client"]
-    @plex_library = PlexLibrary.new(@host, @port, @client, @tv_index, @movie_index, @player)
+    @plex_library = PlexLibrary.new(@host, @port, @tv_index, @movie_index, @player)
   end
 
   listen_for /on deck tv shows/i do
