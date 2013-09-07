@@ -34,10 +34,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   def initialize(config)
     @host = config["plex_host"]
     @port = config["plex_port"]
-	@client =config["plex_client"]
     @tv_index = config["plex_tv_index"]
 	@movie_index = config["plex_movie_index"]
-    @player = config["plex_player_host"].nil? ? config["plex_host"] : config["plex_player_host"]
+    @player = config["plex_client"]
     @plex_library = PlexLibrary.new(@host, @port, @client, @tv_index, @movie_index, @player)
   end
 

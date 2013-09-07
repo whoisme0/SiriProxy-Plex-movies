@@ -12,10 +12,9 @@ class PlexLibrary
   def initialize(host, port, client, tv_index, movie_index, player = nil)
     @host     = host
     @port     = port
-	@client   = client
     @tv_index = tv_index
     @movie_index = movie_index
-    @player   = player.nil? ? client : player
+    @player   = client
     @indexes = {}
     @indexes["#{TV}"] = []
     if (tv_index == "auto")
