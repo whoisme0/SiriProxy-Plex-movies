@@ -22,6 +22,7 @@ require 'cora'
 require 'siri_objects'
 require 'rexml/document'
 require 'plex_library'
+require 'csv'
 
 #######
 # This is a very basic plugin for Plex but I plan on adding to it =)
@@ -30,14 +31,22 @@ require 'plex_library'
 ######
 
 class SiriProxy::Plugin::Plex < SiriProxy::Plugin
-  
+
   def initialize(config)
-    @host = config["plex_host"]
-    @port = config["plex_port"]
-    @tv_index = config["plex_tv_index"]
+	@host = config["plex_host"]
+	@port = config["plex_port"]
+	@tv_index = config["plex_tv_index"]
 	@movie_index = config["plex_movie_index"]
-    @player = config["plex_client"]
-    @plex_library = PlexLibrary.new(@host, @port, @tv_index, @movie_index, @player)
+	@playerFile = "#{Dir.home}/.siriproxy/players.csv"
+	@players = Hash.new
+	  if File.exists?(@playerFile)
+		@players = Hash[CSV.read(@playerFile)]
+		defaultPlayer = @players["default"]
+		@player = @players[defaultPlayer]
+	  else
+		@player = nil
+	  end
+	@plex_library = PlexLibrary.new(@host, @port, @tv_index, @movie_index)
   end
 
   listen_for /on deck tv shows/i do
@@ -58,16 +67,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 						resume.gsub!(/^The\s+/, "")
 						splitted = resume.split(" ").join("|")
 						if(splitted.match(/Resume/))
-						  @plex_library.resume_media(show.key, show.viewOffset.value)
+						  player_resume_media(show.key, show.viewOffset.value)
 						  say "Resuming #{show.gptitle}, #{show.title}."
 						elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-						  @plex_library.play_media(show.key)
+						  player_play_media(show.key)
 						  say "Playing #{show.gptitle}, #{show.title}."
 						else
 						  say "I'm sorry, I didn't understand that.  Please try again."
 						end
 					else
-					  @plex_library.play_media(show.key)
+					  player_play_media(show.key)
 					  say "Playing #{show.gptitle}, #{show.title}."
 					end
 				else
@@ -77,9 +86,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end
-	  request_completed
+	request_completed
   end
-  
+
   listen_for /play(?: a)? random on deck (tv show|episode)/i do
 	ondeck_shows = @plex_library.all_ondeck()
 	if(!ondeck_shows.empty?)
@@ -87,19 +96,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(show != nil)
 			if(show.viewOffset != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
-			    resume.gsub!(/^The\s+/, "")
+				resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset.value)
+				  player_resume_media(show.key, show.viewOffset.value)
 				  say "Resuming #{show.gptitle}, #{show.title}."
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-				  @plex_library.play_media(show.key)
+				  player_play_media(show.key)
 				  say "Playing #{show.gptitle}, #{show.title}."
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
-			  @plex_library.play_media(show.key)
+			  player_play_media(show.key)
 			  say "Playing #{show.gptitle}, #{show.title}."
 			end
 		else
@@ -108,15 +117,15 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /(play) (a)? random(.+) of(.+)/i do |command, misc, some, request|
 	show = @plex_library.find_show(request)
 	if(show != nil)
 	  random_episode = @plex_library.show_episodes(show).shuffle.first
 		if(random_episode != nil)
-		  @plex_library.play_media(random_episode.key)
+		  player_play_media(random_episode.key)
 		  say "Playing a random episode of #{show.title}."
 		else
 		  say "Sorry, an error occurred.  Please try again."
@@ -124,9 +133,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find any TV shows."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /on deck movies/i do
 	ondeck_movies = @plex_library.all_ondeck_movies()
 	if(!ondeck_movies.empty?)
@@ -142,19 +151,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			if(movie != nil)
 				if(movie.viewOffset != nil)
 				  resume = ask "Would you like to resume #{movie.title} or start from the beginning?"
-				    resume.gsub!(/^The\s+/, "")
+					resume.gsub!(/^The\s+/, "")
 					splitted = resume.split(" ").join("|")
 					if(splitted.match(/Resume/))
-					  @plex_library.resume_media(movie.key, movie.viewOffset.value)
+					  player_resume_media(movie.key, movie.viewOffset.value)
 					  say "Resuming #{movie.title}."
 					elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-					  @plex_library.play_media(movie.key)
+					  player_play_media(movie.key)
 					  say "Playing #{movie.title}."
 					else
 					  say "I'm sorry, I didn't understand that.  Please try again."
 					end
 				else
-				  @plex_library.play_media(movie.key)
+				  player_play_media(movie.key)
 				  say "Playing #{movie.title}."
 				end
 			else
@@ -164,9 +173,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /play(?: a)? random on deck movie/i do
 	ondeck_movies = @plex_library.all_ondeck_movies()
 	if(!ondeck_movies.empty?)
@@ -177,16 +186,16 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			    resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
-				  @plex_library.resume_media(movie.key, movie.viewOffset.value)
+				  player_resume_media(movie.key, movie.viewOffset.value)
 				  say "Resuming #{movie.title}."
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-				  @plex_library.play_media(movie.key)
+				  player_play_media(movie.key)
 				  say "Playing #{movie.title}."
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
-			  @plex_library.play_media(movie.key)
+			  player_play_media(movie.key)
 			  say "Playing #{movie.title}."
 			end
 		else
@@ -195,15 +204,15 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /play(?: a)? random unwatched movie/i do
 	unwatched_movies = @plex_library.all_unwatched_movies()
 	if(!unwatched_movies.empty?)
 	  movie = @plex_library.all_unwatched_movies.shuffle.first
 		if(movie != nil)
-		  @plex_library.play_media(movie.key)
+		  player_play_media(movie.key)
 		  say "Playing #{movie.title}."
 		else
 		  say "Sorry, an error occurred.  Please try again."
@@ -211,15 +220,15 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find any unwatched movies."
 	end 
-	  request_completed
+	request_completed
   end
-  
+
   listen_for /(play) (the)? movie (.+)/i do |command, misc, next_movie|
 	movies = @plex_library.all_movies()
 	if(!movies.empty?)
 	  movie = @plex_library.find_movie(next_movie)
 		if(movie != nil)
-		  @plex_library.play_media(movie.key)
+		  player_play_media(movie.key)
 		  say "Playing #{movie.title}."
 		else
 		  say "Sorry I couldn't find #{next_movie}."
@@ -227,15 +236,15 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find any movies."
 	end
-	  request_completed
+	request_completed
   end
-  
+
   listen_for /play(?: a)? random movie/i do
 	all_movies = @plex_library.all_movies()
 	if(!all_movies.empty?)
 	  movie = @plex_library.all_movies.shuffle.first
 		if(movie != nil)
-		  @plex_library.play_media(movie.key)
+		  player_play_media(movie.key)
 		  say "Playing #{movie.title}."
 		else
 		  say "Sorry, an error occurred.  Please try again."
@@ -243,9 +252,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find any movies."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /(play)(?: the)? next(.+) of (.+)/i do |command, some, next_episode|
 	ondeck_shows = @plex_library.all_ondeck()
 	if(!ondeck_shows.empty?)
@@ -253,19 +262,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		if(show != nil)
 			if(show.viewOffset != nil)
 			  resume = ask "Would you like to resume this episode or start from the beginning?"
-			    resume.gsub!(/^The\s+/, "")
+				resume.gsub!(/^The\s+/, "")
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
-				  @plex_library.resume_media(show.key, show.viewOffset.value)
+				  player_resume_media(show.key, show.viewOffset.value)
 				  say "Resuming #{show.gptitle}, #{show.title}."
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
-				  @plex_library.play_media(show.key)
+				  player_play_media(show.key)
 				  say "Playing #{show.gptitle}, #{show.title}."
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
-			  @plex_library.play_media(show.key)
+			  player_play_media(show.key)
 			  say "Playing #{show.gptitle}, #{show.title}."
 			end
 		else
@@ -274,165 +283,300 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	else
 	  say "Sorry I couldn't find anything in your onDeck queue."
 	end 
-	  request_completed
+	request_completed
   end 
-  
+
   listen_for /(play|playing) (the)? latest(.+) of(.+)/i do |command, misc, some, show|
 	play_latest_episode_of(show)
 	request_completed
   end
-  
+
   listen_for /(play|playing)(?: the)?(?: TV)? show (.+)/i do |command, show_title|
 
-    season_index = 1
-    show = @plex_library.find_show(show_title)
+	season_index = 1
+	show = @plex_library.find_show(show_title)
 
-    if(@plex_library.has_many_seasons?(show))
-      season_index = ask_for_season
-      episode_index = ask_for_episode
-    else
-      episode_index = ask_for_episode
-    end
-            
-    play_episode(show, episode_index, season_index)
-    
-    request_completed      
+	if(@plex_library.has_many_seasons?(show))
+	season_index = ask_for_season
+	episode_index = ask_for_episode
+	else
+	episode_index = ask_for_episode
+	end
+
+	play_episode(show, episode_index, season_index)
+
+	request_completed      
   end
-  
+
   listen_for /(play|playing) (.+)\sepisode (.+)/i do |command, first_match, second_match|
-    
-    show_title = first_match
-    
-    if(first_match.match(/(.+) season/))
-      show_title = $1
-    end
-    
+
+	show_title = first_match
+
+	if(first_match.match(/(.+) season/))
+	show_title = $1
+	end
+
    show = @plex_library.find_show(show_title)    
-    season_index = match_number(first_match, "season")    
-    episode_index = match_number(second_match)
-    
-    #We need to match season in both first match and second
-    #play mythbusters episode 9 season 10 or
-    #play mythbusters season 10 episode 9
-    if(season_index == -1)
-      season = match_number(second_match)
-    end
-    
-    has_many_seasons = @plex_library.has_many_seasons?(show)
-    
-    if(season_index == -1 && has_many_seasons)
-      season_index = ask_for_season
-    elsif(season_index == -1 && !has_many_seasons)
-      season_index = 1
-    end
-    
-    if(show)
-      play_episode(show, episode_index, season_index)
-    else
-      show_not_found
-    end
-    
-    request_completed
+	season_index = match_number(first_match, "season")    
+	episode_index = match_number(second_match)
+	
+	#We need to match season in both first match and second
+	#play mythbusters episode 9 season 10 or
+	#play mythbusters season 10 episode 9
+	if(season_index == -1)
+	season = match_number(second_match)
+	end
+
+	has_many_seasons = @plex_library.has_many_seasons?(show)
+
+	if(season_index == -1 && has_many_seasons)
+	season_index = ask_for_season
+	elsif(season_index == -1 && !has_many_seasons)
+	season_index = 1
+	end
+
+	if(show)
+	play_episode(show, episode_index, season_index)
+	else
+	show_not_found
+	end
+
+	request_completed
   end
-  
+
   listen_for /(Pause|Resume|Stop)(?: the)? (plex|tv|show|tv show|movie)/i do |command, some|
 	if command == "Pause"
-	  @plex_library.pause
+	  player_pause
 	  say "Pausing #{some}"
 	elsif command == "Resume"
-	  @plex_library.resume_play
+	  player_resume_play
 	  say "Resuming #{some}"
 	elsif command == "Stop"
-	  @plex_library.stop
+	  player_stop
 	  say "Stopping #{some}"
-	end	
-	  request_completed
+	end
+	request_completed
   end
-  
-  def ask_for_number(question)   
-    episode = nil
-    
-    while(response = ask(question))
-      
-      number = -1
-      
-      if(response =~ /([0-9]+\s*|one|two|three|four|five|six|seven|eight|nine|ten)/i)
-        number = $1
-        break
-      else
-        question = "I didn't get that, please state a number"
-      end
-    end
-    
-    if(number.to_i == 0)
-        number = map_siri_numbers_to_int(number)
-    end
-    
-    number.to_i
-  end
-  
-  def match_number(text, key = nil)
-    if(text.match(/#{key}\s*([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten)/i))
-      
-      number = $1.to_i
-      
-      if(number == 0)
-        number = map_siri_numbers_to_int($1)
-      end
-      
-      return number
-    end
-    
-    return -1
-  end
-  
-  def ask_for_season
-    ask_for_number("Which season?")
-  end
-  
-  def ask_for_episode
-    ask_for_number("Which episode?")
-  end
-  
-  def play_episode(show, episode_index, season_index = 1)
-    
-    if(show != nil)
-      episode = @plex_library.find_episode(show, season_index, episode_index)
-      
-      if(episode)
-        @plex_library.play_media(episode.key)
-        say "Playing \"#{episode.title}\""
-      else
-        episode_not_found
-      end
-    else
-      show_not_found
-    end
-  end
-  
-  def show_not_found
-    say "I'm sorry but I couldn't find that TV show"
-  end
-  
-  def episode_not_found
-    say "I'm sorry but I couldn't find the episode you asked for"
-  end
-  
-  def map_siri_numbers_to_int(number)
-    ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
-  end
-  
-  def play_latest_episode_of(show_title)
-    show = @plex_library.find_show(show_title)
-    
-    episode = @plex_library.latest_episode(show)
 
-    if(episode != nil)
-      @plex_library.play_media(episode.key)
-      say "Playing \"#{episode.title}\""
-    else
-      episode_not_found
-    end
+  listen_for /(Add|Create)(?: a)? new(?: plex)? player/i do
+	nextPlayer = ask "What would you like to call this player?"
+	  if nextPlayer =! nil
+		newIP = ask "What is the IP address of #{nextPlayer}?"
+		  if newIP =! nil
+			newPlayer(nextPlayer, newIP)
+			say "Okay, I added #{newPlayer} at #{@players[newPlayer]}."
+		  else
+			say "Sorry, I didn't understand your IP address."
+		  end
+	  else
+		say "Sorry, I didn't understand that player name."
+	  end
+	request_completed
   end
-  
+
+  listen_for /(Change|Switch)(?: plex)? player to (.+)/i do |command, second, third, name|
+	if name =! nil
+	  if @players[name] =! nil
+		@player = @players[name]
+		  if command = "Change"
+			say "Okay, I changed the current player to #{name}."
+		  elsif command = "Switch"
+			say "Okay, I switched the current player to #{name}."
+		  end
+	  else
+		say "You haven't added #{name} as a player yet."
+	  end
+	else
+	  say "I'm sorry, I didn't catch the player name."
+	end
+	request_completed
+  end
+
+  listen_for /Set(?: the)?(?: a)?(?: new)? default player to (.+)/i do |command, second, third, fourth, name|
+	if name =! nil
+	  newDefault = Hash.new
+		newDefault[:default] = name
+		newDefault.merge(@players)
+		say "Okay, I set #{@players[:default]} as your default player."
+	else
+	  say "Sorry, I didn't catch a player name."
+	end
+	request_completed
+  end
+
+
+
+
+
+  def ask_for_number(question)   
+	episode = nil
+	
+	while(response = ask(question))
+
+	  number = -1
+
+	if(response =~ /([0-9]+\s*|one|two|three|four|five|six|seven|eight|nine|ten)/i)
+		number = $1
+		break
+	else
+		question = "I didn't get that, please state a number"
+	end
+	end
+
+	if(number.to_i == 0)
+		number = map_siri_numbers_to_int(number)
+	end
+	
+	number.to_i
+  end
+
+  def match_number(text, key = nil)
+	if(text.match(/#{key}\s*([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten)/i))
+
+	number = $1.to_i
+
+	  if(number == 0)
+		number = map_siri_numbers_to_int($1)
+	  end
+
+	  return number
+	end
+
+	return -1
+  end
+
+  def ask_for_season
+	ask_for_number("Which season?")
+  end
+
+  def ask_for_episode
+	ask_for_number("Which episode?")
+  end
+
+  def play_episode(show, episode_index, season_index = 1)
+	
+	if(show != nil)
+	  episode = @plex_library.find_episode(show, season_index, episode_index)
+
+	  if(episode)
+		player_play_media(episode.key)
+		say "Playing \"#{episode.title}\""
+	  else
+		episode_not_found
+	  end
+	else
+	  show_not_found
+	end
+  end
+
+  def show_not_found
+	say "I'm sorry but I couldn't find that TV show"
+  end
+
+  def episode_not_found
+	say "I'm sorry but I couldn't find the episode you asked for"
+  end
+
+  def map_siri_numbers_to_int(number)
+	["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+  end
+
+  def play_latest_episode_of(show_title)
+	show = @plex_library.find_show(show_title)
+
+	episode = @plex_library.latest_episode(show)
+
+	if(episode != nil)
+	  player_play_media(episode.key)
+	  say "Playing \"#{episode.title}\""
+	else
+	  episode_not_found
+	end
+  end
+
+  def player_play_media(key)
+	if @player =! nil
+	  url_encoded_key = CGI::escape(key)
+	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}"
+
+	  begin
+		open(uri).read
+	  rescue OpenURI::HTTPError => err
+		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
+	  end
+	else
+	  say "You have not added any Plex players yet."
+	end
+  end
+
+  def player_resume_media(key, viewOffset)
+	if @player =! nil
+	  url_encoded_key = CGI::escape(key)
+	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}&viewOffset=#{viewOffset}"
+
+	  begin
+		open(uri).read
+	  rescue OpenURI::HTTPError => err
+		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
+	  end
+	else
+	  say "You have not added any Plex players yet."
+	end
+  end
+
+  def player_pause
+	if @player =! nil
+	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/pause"
+
+	  begin
+		open(uri).read
+	  rescue OpenURI::HTTPError => err
+		puts "Cannot pause playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
+	  end
+	else
+	  say "You have not added any Plex players yet."
+	end
+  end
+
+  def player_resume_play
+	if @player =! nil
+	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/play"
+
+	  begin
+		open(uri).read
+	  rescue OpenURI::HTTPError => err
+		puts "Cannot resume playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
+	  end
+	else
+	  say "You have not added any Plex players yet."
+	end
+  end
+
+  def player_stop
+	if @player =! nil
+	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/stop"
+
+	  begin
+		open(uri).read
+	  rescue OpenURI::HTTPError => err
+		puts "Cannot stop playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
+	  end
+	else
+	  say "You have not added any Plex players yet."
+	end
+  end
+
+  def changePlayer(nextPlayer)
+	if @players[nextplayer] =! nil
+	  @player = @players[newPlayer]
+	else
+	  say "You haven't added that player yet."
+	end
+  end
+
+  def newPlayer(nextPlayer, newIP)
+	@players[nextPlayer] = newIP
+	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
+  end
+
 end
