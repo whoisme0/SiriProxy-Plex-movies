@@ -41,7 +41,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	@players = Hash.new
 	  if File.exists?(@playerFile)
 		@players = Hash[CSV.read(@playerFile)]
-		currentPlayer = @players["%current_player%"]
+		currentPlayer = @players["_current_player_"]
 		@player = @players[currentPlayer]
 	  else
 		CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
@@ -476,7 +476,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  if @players[name] != nil
 		@player = @players[name]
 		  currentHash = Hash.new
-		  currentHash[:%current_player%] = name
+		  currentHash[:_current_player_] = name
 		  @players.merge!(currentHash)
 		  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		  if command == "Change"
