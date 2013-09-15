@@ -369,7 +369,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			say "debug: #{newIP}"
 			newPlayer(nextPlayer, newIP)
 			say "debug: back at it"
-			say "Okay, I added #{newPlayer} at #{@players[:newPlayer]}."
+			say "Okay, I added #{newPlayer} at #{newIP}."
 		  else
 			say "Sorry, I didn't understand your IP address."
 		  end
