@@ -37,7 +37,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	@port = config["plex_port"]
 	@tv_index = config["plex_tv_index"]
 	@movie_index = config["plex_movie_index"]
-	@playerFile = "root/.siriproxy/players.csv"
+	@playerFile = "#{Dir.home}/.siriproxy/players.csv"
 	@players = Hash.new
 	  if File.exists?(@playerFile)
 		@players = Hash[CSV.read(@playerFile)]
