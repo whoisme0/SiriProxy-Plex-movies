@@ -581,8 +581,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	say "debug: After newPlayer."
 	say "debug: nextPlayer is #{nextPlayer}, newIP is #{newIP}."
 	  newestPlayer = Hash.new
+say "1"
 		newestPlayer[nextPlayer] = newIP
+say "2"
 		newestPlayer.merge(@players)
+say "3"
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
   end
 
