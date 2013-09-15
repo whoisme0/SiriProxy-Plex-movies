@@ -41,8 +41,6 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	@players = Hash.new
 	  if File.exists?(@playerFile)
 		@players = Hash[CSV.read(@playerFile)]
-		currentPlayer = @players["_current_player_"]
-		@player = @players[currentPlayer]
 		@is_there_player = true
 	  else
 		CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
