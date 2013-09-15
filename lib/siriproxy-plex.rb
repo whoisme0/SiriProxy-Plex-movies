@@ -369,7 +369,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 			say "debug: #{newIP}"
 			newPlayer(nextPlayer, newIP)
 			say "debug: back at it"
-			say "Okay, I added #{newPlayer} at #{@players[newPlayer]}."
+			say "Okay, I added #{newPlayer} at #{@players[:newPlayer]}."
 		  else
 			say "Sorry, I didn't understand your IP address."
 		  end
@@ -582,7 +582,6 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   def newPlayer(nextPlayer, newIP)
 	@players[nextPlayer] = newIP
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
-	say "debug: written"
   end
 
 end
