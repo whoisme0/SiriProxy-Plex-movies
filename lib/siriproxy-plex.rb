@@ -364,6 +364,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  if nextPlayer != nil
 		newIP = ask "What is the IP address of #{nextPlayer}#{63.chr}"
 		  if newIP != nil
+			nexPlayer.downcase!
 			newIP = newIP.split(" dot ").join(".")
 			newIP = newIP.split(" ").join(".")
 			say "debug: #{newIP}"
@@ -398,7 +399,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |name|
 	if name != nil
-	  @players[default] = name
+	  @players[:default] = name
 	  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		say "Okay, I set #{@players[:default]} as your default player."
 	else
