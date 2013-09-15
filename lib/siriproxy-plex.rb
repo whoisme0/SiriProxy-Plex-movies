@@ -593,21 +593,19 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   def player_play_media(key)
 	if @player != nil
-	  say "debug: Before noPlayer"
 	  noPlayer = false
-	  say "debug: After noPlayer"
 	  url_encoded_key = CGI::escape(key)
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}"
 
-	  say "debug: Before open"
 	  begin
 		open(uri).read
-		say "debug: after open"
 	  rescue OpenURI::HTTPError => err
 		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-		noPlayer = true
+	  say "debug: Before else"
+	  noPlayer = true
+	  say "debug: After else"
 	end
   end
 
@@ -623,7 +621,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-		noPlayer = true
+	  noPlayer = true
 	end
   end
 
@@ -638,7 +636,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot pause playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-		noPlayer = true
+	  noPlayer = true
 	end
   end
 
@@ -653,7 +651,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot resume playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-		noPlayer = true
+	  noPlayer = true
 	end
   end
 
@@ -668,7 +666,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot stop playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-		noPlayer = true
+	  noPlayer = true
 	end
   end
 
