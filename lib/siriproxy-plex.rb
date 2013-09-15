@@ -397,7 +397,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	request_completed
   end
 
-  listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |command, second, third, fourth, name|
+  listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |command, second, third, name|
 	if name != nil
 	  @players[default] = name
 	  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
