@@ -41,8 +41,8 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	@players = Hash.new
 	  if File.exists?(@playerFile)
 		@players = Hash[CSV.read(@playerFile)]
-		defaultPlayer = @players["default"]
-		@player = @players[defaultPlayer]
+		currentPlayer = @players["current"]
+		@player = @players[currentPlayer]
 	  else
 		CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		@player = nil
@@ -383,6 +383,8 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  name.downcase!
 	  if @players[name] != nil
 		@player = @players[name]
+		  @players[:current] = name
+		  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		  if command == "Change"
 			say "Okay, I changed the current player to #{name}."
 		  elsif command == "Switch"
@@ -393,18 +395,6 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  end
 	else
 	  say "I'm sorry, I didn't catch the player name."
-	end
-	request_completed
-  end
-
-  listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |name|
-	if name != nil
-	  name.downcase!
-	  @players[:default] = name
-	  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
-		say "Okay, I set #{@players[:default]} as your default player."
-	else
-	  say "Sorry, I didn't catch a player name."
 	end
 	request_completed
   end
