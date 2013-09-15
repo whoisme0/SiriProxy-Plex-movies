@@ -44,6 +44,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		defaultPlayer = @players["default"]
 		@player = @players[defaultPlayer]
 	  else
+		CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		@player = nil
 	  end
 	@plex_library = PlexLibrary.new(@host, @port, @tv_index, @movie_index)
@@ -578,11 +579,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def newPlayer(nextPlayer, newIP)
-	say "debug: After newPlayer."
-	say "debug: nextPlayer is #{nextPlayer}, newIP is #{newIP}."
 	@players[nextPlayer] = newIP
-say "debug: #{@players}"
-say "debug: #{@playerFile}"
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
   end
 
