@@ -579,6 +579,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   def newPlayer(nextPlayer, newIP)
 	say "debug: After newPlayer."
+	say "debug: nextPlayer is #{nextPlayer}, newIP is #{newIP}."
 	@players[nextPlayer] = newIP
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
   end
