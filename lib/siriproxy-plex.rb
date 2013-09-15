@@ -362,7 +362,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	nextPlayer = ask "What would you like to call this player?"
 	say "debug: #{nextPlayer}"
 	  if nextPlayer != nil
-		newIP = ask "What is the IP address of #{nextPlayer} ?"
+		newIP = ask "What is the IP address of #{nextPlayer}^?"
 		  if newIP != nil
 			newPlayer(nextPlayer, newIP)
 			say "Okay, I added #{newPlayer} at #{@players[newPlayer]}."
