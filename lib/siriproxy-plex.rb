@@ -362,13 +362,13 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   listen_for /(Add|Create)(?: a)? new(?: plex)? player/i do
 	nextPlayer = ask "What would you like to call this player?"
 	  if nextPlayer != nil
+		nextPlayer.downcase!
 		newIP = ask "What is the IP address of #{nextPlayer}#{63.chr}"
 		  if newIP != nil
-			nextPlayer.downcase!
 			newIP = newIP.split(" dot ").join(".")
 			newIP = newIP.split(" ").join(".")
 			newPlayer(nextPlayer, newIP)
-			say "Okay, I added #{nextPlayer} at #{newIP}."
+			say "Okay, I added #{nextPlayer} at #{newIP}"
 		  else
 			say "Sorry, I didn't understand your IP address."
 		  end
@@ -380,6 +380,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /(Change|Switch)(?: plex)? player to (.+)/i do |command, name|
 	if name != nil
+	  name.downcase!
 	  if @players[name] != nil
 		@player = @players[name]
 		  if command == "Change"
@@ -398,6 +399,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |name|
 	if name != nil
+	  name.downcase!
 	  @players[:default] = name
 	  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		say "Okay, I set #{@players[:default]} as your default player."
