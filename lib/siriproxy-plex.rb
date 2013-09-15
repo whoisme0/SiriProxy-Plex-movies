@@ -361,9 +361,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   listen_for /(Add|Create)(?: a)? new(?: plex)? player/i do
 	nextPlayer = ask "What would you like to call this player?"
 	say "debug: #{nextPlayer}"
-	  if nextPlayer =! nil
-		newIP = ask "What is the IP address of #{nextPlayer}?"
-		  if newIP =! nil
+	  if nextPlayer != nil
+		newIP = ask "What is the IP address of #{nextPlayer} ?"
+		  if newIP != nil
 			newPlayer(nextPlayer, newIP)
 			say "Okay, I added #{newPlayer} at #{@players[newPlayer]}."
 		  else
@@ -376,8 +376,8 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   listen_for /(Change|Switch)(?: plex)? player to (.+)/i do |command, second, third, name|
-	if name =! nil
-	  if @players[name] =! nil
+	if name != nil
+	  if @players[name] != nil
 		@player = @players[name]
 		  if command == "Change"
 			say "Okay, I changed the current player to #{name}."
@@ -394,7 +394,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   listen_for /Set(?: the)?(?: a)?(?: new)? default player to (.+)/i do |command, second, third, fourth, name|
-	if name =! nil
+	if name != nil
 	  newDefault == Hash.new
 		newDefault[:default] = name
 		newDefault.merge(@players)
@@ -496,7 +496,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def player_play_media(key)
-	if @player =! nil
+	if @player != nil
 	  url_encoded_key = CGI::escape(key)
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}"
 
@@ -511,7 +511,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def player_resume_media(key, viewOffset)
-	if @player =! nil
+	if @player != nil
 	  url_encoded_key = CGI::escape(key)
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/application/playMedia?key=#{url_encoded_key}&path=http://#{@host}:#{@port}#{key}&viewOffset=#{viewOffset}"
 
@@ -526,7 +526,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def player_pause
-	if @player =! nil
+	if @player != nil
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/pause"
 
 	  begin
@@ -540,7 +540,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def player_resume_play
-	if @player =! nil
+	if @player != nil
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/play"
 
 	  begin
@@ -554,7 +554,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def player_stop
-	if @player =! nil
+	if @player != nil
 	  uri = "http://#{@host}:#{@port}/system/players/#{@player}/playback/stop"
 
 	  begin
@@ -568,7 +568,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   end
 
   def changePlayer(nextPlayer)
-	if @players[nextplayer] =! nil
+	if @players[nextplayer] != nil
 	  @player = @players[newPlayer]
 	else
 	  say "You haven't added that player yet."
