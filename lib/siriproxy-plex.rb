@@ -385,7 +385,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		@player = @players[name]
 		  currentHash = Hash.new
 		  currentHash[:current] = name
-		  currentHash.merge!(@players)
+		  @players.merge!(currentHash)
 		  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		  if command == "Change"
 			say "Okay, I changed the current player to #{name}."
@@ -575,7 +575,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	@players[nextPlayer] = newIP
 	  newHash = Hash.new
 	  newHash[nextPlayer] = newIP
-	  newHash.merge!(@players)
+	  @players.merge!(newHash)
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
   end
 
