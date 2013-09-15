@@ -69,16 +69,28 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 						splitted = resume.split(" ").join("|")
 						if(splitted.match(/Resume/))
 						  player_resume_media(show.key, show.viewOffset.value)
-						  say "Resuming #{show.gptitle}, #{show.title}."
+							if noPlayer != nil
+							  say "Resuming #{show.gptitle}, #{show.title}."
+							else
+							  say "You are not currently controlling any players."
+							end
 						elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 						  player_play_media(show.key)
-						  say "Playing #{show.gptitle}, #{show.title}."
+							if noPlayer != nil
+							  say "Playing #{show.gptitle}, #{show.title}."
+							else
+							  say "You are not currently controlling any players."
+							end
 						else
 						  say "I'm sorry, I didn't understand that.  Please try again."
 						end
 					else
 					  player_play_media(show.key)
-					  say "Playing #{show.gptitle}, #{show.title}."
+						if noPlayer != nil
+						  say "Playing #{show.gptitle}, #{show.title}."
+						else
+						  say "You are not currently controlling any players."
+						end
 					end
 				else
 				  say "Sorry I couldn't find #{response} in the ondeck queue."
@@ -101,16 +113,28 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
 				  player_resume_media(show.key, show.viewOffset.value)
-				  say "Resuming #{show.gptitle}, #{show.title}."
+					if noPlayer != nil
+					  say "Resuming #{show.gptitle}, #{show.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 				  player_play_media(show.key)
-				  say "Playing #{show.gptitle}, #{show.title}."
+					if noPlayer != nil
+					  say "Playing #{show.gptitle}, #{show.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  player_play_media(show.key)
-			  say "Playing #{show.gptitle}, #{show.title}."
+				if noPlayer != nil
+				  say "Playing #{show.gptitle}, #{show.title}."
+				else
+				  say "You are not currently controlling any players."
+				end
 			end
 		else
 		  say "Sorry, an error occurred.  Please try again."
@@ -127,7 +151,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  random_episode = @plex_library.show_episodes(show).shuffle.first
 		if(random_episode != nil)
 		  player_play_media(random_episode.key)
-		  say "Playing a random episode of #{show.title}."
+			if noPlayer != nil
+			  say "Playing a random episode of #{show.title}."
+			else
+			  say "You are not currently controlling any players."
+			end
 		else
 		  say "Sorry, an error occurred.  Please try again."
 		end 
@@ -156,16 +184,28 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 					splitted = resume.split(" ").join("|")
 					if(splitted.match(/Resume/))
 					  player_resume_media(movie.key, movie.viewOffset.value)
-					  say "Resuming #{movie.title}."
+						if noPlayer != nil
+						  say "Resuming #{movie.title}."
+						else
+						  say "You are not currently controlling any players."
+						end
 					elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 					  player_play_media(movie.key)
-					  say "Playing #{movie.title}."
+						if noPlayer != nil
+						  say "Playing #{movie.title}."
+						else
+						  say "You are not currently controlling any players."
+						end
 					else
 					  say "I'm sorry, I didn't understand that.  Please try again."
 					end
 				else
 				  player_play_media(movie.key)
-				  say "Playing #{movie.title}."
+					if noPlayer != nil
+					  say "Playing #{movie.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				end
 			else
 			  say "Sorry I couldn't find #{response} in the ondeck queue."
@@ -188,16 +228,28 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
 				  player_resume_media(movie.key, movie.viewOffset.value)
-				  say "Resuming #{movie.title}."
+					if noPlayer != nil
+					  say "Resuming #{movie.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 				  player_play_media(movie.key)
-				  say "Playing #{movie.title}."
+					if noPlayer != nil
+					  say "Playing #{movie.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  player_play_media(movie.key)
-			  say "Playing #{movie.title}."
+				if noPlayer != nil
+				  say "Playing #{movie.title}."
+				else
+				  say "You are not currently controlling any players."
+				end
 			end
 		else
 		  say "Sorry, an error occurred.  Please try again."
@@ -214,7 +266,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  movie = @plex_library.all_unwatched_movies.shuffle.first
 		if(movie != nil)
 		  player_play_media(movie.key)
-		  say "Playing #{movie.title}."
+			if noPlayer != nil
+			  say "Playing #{movie.title}."
+			else
+			  say "You are not currently controlling any players."
+			end
 		else
 		  say "Sorry, an error occurred.  Please try again."
 		end 
@@ -230,7 +286,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  movie = @plex_library.find_movie(next_movie)
 		if(movie != nil)
 		  player_play_media(movie.key)
-		  say "Playing #{movie.title}."
+			if noPlayer != nil
+			  say "Playing #{movie.title}."
+			else
+			  say "You are not currently controlling any players."
+			end
 		else
 		  say "Sorry I couldn't find #{next_movie}."
 		end
@@ -246,7 +306,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  movie = @plex_library.all_movies.shuffle.first
 		if(movie != nil)
 		  player_play_media(movie.key)
-		  say "Playing #{movie.title}."
+			if noPlayer != nil
+			  say "Playing #{movie.title}."
+			else
+			  say "You are not currently controlling any players."
+			end
 		else
 		  say "Sorry, an error occurred.  Please try again."
 		end 
@@ -267,16 +331,28 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 				splitted = resume.split(" ").join("|")
 				if(splitted.match(/Resume/))
 				  player_resume_media(show.key, show.viewOffset.value)
-				  say "Resuming #{show.gptitle}, #{show.title}."
+					if noPlayer != nil
+					  say "Resuming #{show.gptitle}, #{show.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				elsif(splitted.match(/Start|from|From|beginning|Beginning/))
 				  player_play_media(show.key)
-				  say "Playing #{show.gptitle}, #{show.title}."
+					if noPlayer != nil
+					  say "Playing #{show.gptitle}, #{show.title}."
+					else
+					  say "You are not currently controlling any players."
+					end
 				else
 				  say "I'm sorry, I didn't understand that.  Please try again."
 				end
 			else
 			  player_play_media(show.key)
-			  say "Playing #{show.gptitle}, #{show.title}."
+				if noPlayer != nil
+				  say "Playing #{show.gptitle}, #{show.title}."
+				else
+				  say "You are not currently controlling any players."
+				end
 			end
 		else
 		  say "Sorry I couldn't find #{next_episode} in the ondeck queue."
@@ -348,18 +424,30 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   listen_for /(Pause|Resume|Stop)(?: the)? (plex|tv|show|tv show|movie)/i do |command, some|
 	if command == "Pause"
 	  player_pause
-	  say "Pausing #{some}"
+		if noPlayer != nil
+		  say "Pausing #{some}"
+		else
+		  say "You are not currently controlling any players."
+		end
 	elsif command == "Resume"
 	  player_resume_play
-	  say "Resuming #{some}"
+		if noPlayer != nil
+		  say "Resuming #{some}"
+		else
+		  say "You are not currently controlling any players."
+		end
 	elsif command == "Stop"
 	  player_stop
-	  say "Stopping #{some}"
+		if noPlayer != nil
+		  say "Stopping #{some}"
+		else
+		  say "You are not currently controlling any players."
+		end
 	end
 	request_completed
   end
 
-  listen_for /(Add|Create)(?: a)? new(?: plex)? player/i do
+  listen_for /(Add|Create)(?: a)?(?: new)?(?: plex)? player/i do
 	nextPlayer = ask "What would you like to call this player?"
 	  if nextPlayer != nil
 		nextPlayer.downcase!
@@ -367,7 +455,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		  if newIP != nil
 			newIP = newIP.split(" dot ").join(".")
 			newIP = newIP.split(" ").join(".")
-			newPlayer(nextPlayer, newIP)
+			  @players[nextPlayer] = newIP
+			  newHash = Hash.new
+			  newHash[nextPlayer] = newIP
+			  @players.merge!(newHash)
+			  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 			say "Okay, I added #{nextPlayer} at #{newIP}"
 		  else
 			say "Sorry, I didn't understand your IP address."
@@ -378,7 +470,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	request_completed
   end
 
-  listen_for /(Change|Switch)(?: plex)? player to (.+)/i do |command, name|
+  listen_for /(Change|Switch)(?: current)?(?: plex)? player to (.+)/i do |command, name|
 	if name != nil
 	  name.downcase!
 	  if @players[name] != nil
@@ -457,7 +549,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
 	  if(episode)
 		player_play_media(episode.key)
-		say "Playing \"#{episode.title}\""
+		  if noPlayer != nil
+			say "Playing \"#{episode.title}\""
+		  else
+			say "You are not currently controlling any players."
+		  end
 	  else
 		episode_not_found
 	  end
@@ -485,7 +581,11 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
 	if(episode != nil)
 	  player_play_media(episode.key)
-	  say "Playing \"#{episode.title}\""
+		if noPlayer != nil
+		  say "Playing \"#{episode.title}\""
+		else
+		  say "You are not currently controlling any players."
+		end
 	else
 	  episode_not_found
 	end
@@ -502,7 +602,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-	  say "You have not added any Plex players yet."
+		noPlayers = "true"
 	end
   end
 
@@ -517,7 +617,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot start playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-	  say "You have not added any Plex players yet."
+		noPlayers = "true"
 	end
   end
 
@@ -531,7 +631,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot pause playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-	  say "You have not added any Plex players yet."
+		noPlayers = "true"
 	end
   end
 
@@ -545,7 +645,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot resume playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-	  say "You have not added any Plex players yet."
+		noPlayers = "true"
 	end
   end
 
@@ -559,24 +659,8 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 		puts "Cannot stop playback on #{@player} - are you sure the Plex Player is running (#{err}) -> #{uri}"
 	  end
 	else
-	  say "You have not added any Plex players yet."
+		noPlayers = "true"
 	end
-  end
-
-  def changePlayer(nextPlayer)
-	if @players[nextplayer] != nil
-	  @player = @players[newPlayer]
-	else
-	  say "You haven't added that player yet."
-	end
-  end
-
-  def newPlayer(nextPlayer, newIP)
-	@players[nextPlayer] = newIP
-	  newHash = Hash.new
-	  newHash[nextPlayer] = newIP
-	  @players.merge!(newHash)
-	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
   end
 
 end
