@@ -397,7 +397,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /Set(?: the)?(?: a)?(?: new)? default player to (.+)/i do |command, second, third, fourth, name|
 	if name != nil
-	  newDefault == Hash.new
+	  newDefault = Hash.new
 		newDefault[:default] = name
 		newDefault.merge(@players)
 		say "Okay, I set #{@players[:default]} as your default player."
@@ -580,7 +580,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
   def newPlayer(nextPlayer, newIP)
 	say "debug: After newPlayer."
 	say "debug: nextPlayer is #{nextPlayer}, newIP is #{newIP}."
-	  newestPlayer == Hash.new
+	  newestPlayer = Hash.new
 		newestPlayer[nextPlayer] = newIP
 		newestPlayer.merge(@players)
 	CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
