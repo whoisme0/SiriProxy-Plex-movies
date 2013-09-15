@@ -360,6 +360,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /(Add|Create)(?: a)? new(?: plex)? player/i do
 	nextPlayer = ask "What would you like to call this player?"
+	say "debug: #{nextPlayer}"
 	  if nextPlayer =! nil
 		newIP = ask "What is the IP address of #{nextPlayer}?"
 		  if newIP =! nil
