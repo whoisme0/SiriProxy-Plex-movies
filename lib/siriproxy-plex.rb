@@ -364,10 +364,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  if nextPlayer != nil
 		newIP = ask "What is the IP address of #{nextPlayer}#{63.chr}"
 		  if newIP != nil
-			nexPlayer.downcase!
+			nextPlayer.downcase!
 			newIP = newIP.split(" dot ").join(".")
 			newIP = newIP.split(" ").join(".")
-			say "debug: #{newIP}"
 			newPlayer(nextPlayer, newIP)
 			say "Okay, I added #{nextPlayer} at #{newIP}."
 		  else
