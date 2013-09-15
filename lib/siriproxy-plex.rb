@@ -378,9 +378,9 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	if name =! nil
 	  if @players[name] =! nil
 		@player = @players[name]
-		  if command = "Change"
+		  if command == "Change"
 			say "Okay, I changed the current player to #{name}."
-		  elsif command = "Switch"
+		  elsif command == "Switch"
 			say "Okay, I switched the current player to #{name}."
 		  end
 	  else
@@ -394,7 +394,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 
   listen_for /Set(?: the)?(?: a)?(?: new)? default player to (.+)/i do |command, second, third, fourth, name|
 	if name =! nil
-	  newDefault = Hash.new
+	  newDefault == Hash.new
 		newDefault[:default] = name
 		newDefault.merge(@players)
 		say "Okay, I set #{@players[:default]} as your default player."
