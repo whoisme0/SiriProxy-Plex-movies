@@ -397,11 +397,10 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	request_completed
   end
 
-  listen_for /Set(?: the)?(?: a)?(?: new)? default player to (.+)/i do |command, second, third, fourth, name|
+  listen_for /Set(?: the)?(?: a)?(?: new)? default(?: plex)? player to (.+)/i do |command, second, third, fourth, name|
 	if name != nil
-	  newDefault = Hash.new
-		newDefault[:default] = name
-		newDefault.merge(@players)
+	  @players[default] = name
+	  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
 		say "Okay, I set #{@players[:default]} as your default player."
 	else
 	  say "Sorry, I didn't catch a player name."
