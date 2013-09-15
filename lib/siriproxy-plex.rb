@@ -477,7 +477,7 @@ class SiriProxy::Plugin::Plex < SiriProxy::Plugin
 	  if @players[name] != nil
 		@player = @players[name]
 		  currentHash = Hash.new
-		  currentHash[:_current_player_] = name
+		  currentHash["_current_player_"] = name
 		  @players.merge!(currentHash)
 		  say "#{@players}"
 		  CSV.open(@playerFile, "wb") {|csv| @players.to_a.each {|elem| csv << elem} }
